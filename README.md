@@ -6,7 +6,7 @@ against a real S3-style bucket), `django-crispy-forms` + Bootstrap5 for forms, a
 DB-backed background worker (`django-tasks`), object-level RBAC
 (`django-guardian`), and a timestamped, reject/return-to-previous-step workflow
 story (`django-fsm-2` + `django-fsm-log`) for the eventual application-review
-process. No parcel/GIS table yet — the `addresses` app is just entry + USPS
+process. No parcel/GIS table yet — the `addresses` app is just entry + Census Geocoder
 verification of a free-text address.
 
 ## Getting started
@@ -19,6 +19,22 @@ make init
 
 `make init` builds the image, runs migrations, and starts `db` + `app` + `worker`
 in the foreground. Visit http://localhost:8000/.
+
+### Optional: automatic checks when you commit
+
+These run on your own machine (not in Docker) each time you `git commit`. They
+tidy up code formatting and make sure your commit message follows
+[Conventional Commits](https://www.conventionalcommits.org/) — e.g.
+`fix: handle empty ZIP` or `feat: add parcel search`. The message format matters:
+it's how new version numbers are picked automatically.
+
+```bash
+pip install pre-commit
+pre-commit install --hook-type pre-commit --hook-type commit-msg
+```
+
+The same code checks also run on every pull request, so skipping this is safe.
+When squash-merging a PR, make sure the final commit message follows the same format.
 
 ## Everyday commands
 
@@ -110,10 +126,10 @@ default_storage.__class__  # Should be storages.backends.s3.S3Storage
 default_storage.exists("some/key.txt")
 ```
 
-## Address verification (USPS)
+## Address verification (Census Geocoder)
 
-`addresses/services/usps.py` calls the current USPS Addresses API v3 (OAuth2 —
-the old Web Tools XML API shut down January 2026). Set `USPS_CLIENT_ID` /
-`USPS_CLIENT_SECRET` in `.env` (get these from https://developers.usps.com/)
-for the `/address/` page to actually standardize what's entered; without them
-the form still works but verification will fail with an inline error.
+The `/address/` page checks addresses using the free
+[US Census Geocoder](https://geocoding.geo.census.gov/geocoder/). No setup or
+account is needed. It confirms the street address exists, but not that mail can
+be delivered there, and it doesn't check apartment/unit numbers. See
+[ADR 0001](docs/adrs/0001-address-verification-census-geocoder.md) for why.

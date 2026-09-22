@@ -1,8 +1,8 @@
 from django.utils import timezone
 
 from ..models import Address
+from .census import CensusGeocoderClient
 from .exceptions import AddressVerificationError
-from .usps import USPSClient
 
 __all__ = ["AddressService"]
 
@@ -10,8 +10,8 @@ __all__ = ["AddressService"]
 class AddressService:
     """Service class for reusable operations on Address records."""
 
-    def __init__(self, address_client: USPSClient | None = None) -> None:
-        self._address_client = address_client or USPSClient()
+    def __init__(self, address_client: CensusGeocoderClient | None = None) -> None:
+        self._address_client = address_client or CensusGeocoderClient()
 
     def verify(self, address: Address) -> dict[str, str]:
         """Verify `address`, save it either way, and return the standardized

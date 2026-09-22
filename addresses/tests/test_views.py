@@ -51,13 +51,13 @@ class AddressFormViewTests(TestCase):
 
     @patch("addresses.views.AddressService.verify")
     def test_post_shows_error_when_verification_fails(self, mock_verify: MagicMock) -> None:
-        mock_verify.side_effect = AddressVerificationError("USPS is unavailable")
+        mock_verify.side_effect = AddressVerificationError("Geocoder is unavailable")
 
         response = self.client.post(reverse("addresses:address-form"), VALID_FORM_DATA)
 
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(response.context["result"])
-        self.assertEqual(response.context["error"], "USPS is unavailable")
+        self.assertEqual(response.context["error"], "Geocoder is unavailable")
 
     def test_post_invalid_data_reshows_form_with_errors(self) -> None:
         response = self.client.post(reverse("addresses:address-form"), {})

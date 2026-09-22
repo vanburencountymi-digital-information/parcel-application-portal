@@ -53,6 +53,11 @@ ignore_missing_imports = true
 module = "django_fsm_log.*"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# parameterized ships no type stubs.
+module = "parameterized.*"
+ignore_missing_imports = true
+
 [tool.django-stubs]
 django_settings_module = "config.settings"
 

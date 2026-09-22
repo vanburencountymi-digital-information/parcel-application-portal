@@ -153,10 +153,3 @@ TASKS = {
 # crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-
-# USPS Addresses API v3 (OAuth2) — the old Web Tools XML API shut down Jan 2026.
-# See https://developers.usps.com/apis. Required if you want addresses/services/usps.py
-# to actually verify anything; left unset it will just fail the verification call.
-USPS_API_BASE_URL = env.str("USPS_API_BASE_URL", default="https://apis.usps.com")
-USPS_CLIENT_ID = env.str("USPS_CLIENT_ID", default="")
-USPS_CLIENT_SECRET = env.str("USPS_CLIENT_SECRET", default="")

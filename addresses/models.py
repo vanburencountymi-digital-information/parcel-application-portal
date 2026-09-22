@@ -9,7 +9,7 @@ class Address(models.Model):
     state = USStateField()
     zip_code = USZipCodeField()
 
-    # Filled in from the USPS standardization response once verified.
+    # Filled in from the address client's standardization response once verified.
     standardized_line1 = models.CharField(max_length=255, blank=True)
     standardized_line2 = models.CharField(max_length=255, blank=True)
     standardized_city = models.CharField(max_length=255, blank=True)

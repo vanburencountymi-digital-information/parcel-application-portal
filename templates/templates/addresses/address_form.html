@@ -12,7 +12,7 @@
 
 {% if result %}
     <div class="alert alert-success">
-        <strong>USPS-standardized address:</strong><br>
+        <strong>Standardized address:</strong><br>
         {{ result.line1 }}{% if result.line2 %}, {{ result.line2 }}{% endif %}<br>
         {{ result.city }}, {{ result.state }} {{ result.zip_code }}
     </div>
