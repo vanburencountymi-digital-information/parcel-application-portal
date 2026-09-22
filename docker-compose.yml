@@ -1,0 +1,68 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: parcel_application_portal
+      POSTGRES_USER: parcel
+      POSTGRES_PASSWORD: parcel
+    # Postgres 18+ images manage their own versioned subdirectory under this
+    # mount — mounting at .../data like pre-18 images did makes the image
+    # refuse to start.
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U parcel -d parcel_application_portal"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./media:/app/media
+      # `manage.py makemigrations` needs to write a new file back to the host
+      # so it lands in git — addresses/ itself isn't bind-mounted (it's COPY'd
+      # into the image at build time), so without this a migration written
+      # inside the container only exists in that container's throwaway layer.
+      - ./addresses/migrations:/app/addresses/migrations
+    env_file:
+      - .env
+    environment:
+      # Overrides config/settings.py's default — only applies inside this
+      # compose network, where service names resolve via Docker's DNS.
+      DATABASE_URL: postgres://parcel:parcel@db:5432/parcel_application_portal
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build: .
+    command: python manage.py db_worker
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://parcel:parcel@db:5432/parcel_application_portal
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Optional — lets local dev/CI exercise the same S3Storage backend a real
+  # S3-style bucket would in prod, via Garage in a separate container. Start
+  # with `make garage`. See README's "Media storage (Garage)" section.
+  garage:
+    image: dxflrs/garage:v2.4.1
+    profiles: ["storage"]
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+      - garage_meta:/var/lib/garage/meta
+      - garage_data:/var/lib/garage/data
+    ports:
+      - "3900:3900" # S3 API
+      - "3903:3903" # admin API
+
+volumes:
+  postgres_data:
+  garage_meta:
+  garage_data:

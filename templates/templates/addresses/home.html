@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Parcel Application Portal{% endblock %}
+
+{% block content %}
+<h1>Parcel Application Portal</h1>
+<p class="text-success">Status: OK — the app, database, and templates are wired up.</p>
+<a class="btn btn-primary" href="{% url 'addresses:address-form' %}">Verify an address</a>
+{% endblock %}
