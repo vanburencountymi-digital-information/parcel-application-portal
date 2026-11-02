@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     "common",
     "templates",
     "addresses",
+    "parcels",
+    "documents",
+    "applications",
 ]
 
 MIDDLEWARE = [
