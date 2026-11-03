@@ -18,6 +18,9 @@ django-stubs==6.1.1
 django-stubs-ext==6.1.1
 django-tasks==0.12.0
 django-tasks-db==0.13.0
+djangorestframework==3.18.3
+djangorestframework-stubs==3.18.1
+filetype==1.2.0
 idna==3.20
 jmespath==1.1.0
 librt==0.15.0

@@ -12,4 +12,18 @@ class LoggingService:
     """
 
     def report_exception(self, exc: Exception, *, tags: dict[str, str] | None = None) -> None:
+        """Sends an exception to Sentry.
+
+        Takes: the exception, and optional tags to filter by in Sentry.
+        Returns: nothing.
+        """
         sentry_sdk.capture_exception(exc, tags=tags or {})
+
+    def report_warning(self, message: str, *, tags: dict[str, str] | None = None) -> None:
+        """Reports something worth noticing that isn't an exception, such as a missing
+        setting found at startup. Shows up in Sentry at "warning" level.
+
+        Takes: the message, and optional tags to filter by in Sentry.
+        Returns: nothing.
+        """
+        sentry_sdk.capture_message(message, level="warning", tags=tags or {})

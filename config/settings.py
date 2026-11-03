@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_tasks",
     "django_tasks_db",
+    "rest_framework",
     "crispy_forms",
     "crispy_bootstrap5",
     "guardian",
@@ -48,6 +49,9 @@ INSTALLED_APPS = [
     "common",
     "templates",
     "addresses",
+    "parcels",
+    "documents",
+    "applications",
 ]
 
 MIDDLEWARE = [
@@ -108,6 +112,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 STATIC_URL = "static/"
 
+# Django REST Framework. We only use its serializers so far (ADR 0002), but these defaults
+# apply to any DRF view added later: sign-in required, rate limited, JSON only (no
+# browsable API). A view that needs to be public or looser must say so itself.
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": env.str("API_ANON_RATE", default="20/minute"),
+        "user": env.str("API_USER_RATE", default="120/minute"),
+    },
+}
+
+# Parcel service (parcels.client.ParcelClient). Set PARCEL_SERVICE_URL in .env. The
+# token is empty while the service is unauthenticated; once it needs one, set it here
+# and the client sends it as a Bearer token.
+PARCEL_SERVICE_URL = env.str("PARCEL_SERVICE_URL", default="")
+PARCEL_SERVICE_TOKEN = env.str("PARCEL_SERVICE_TOKEN", default="")
+PARCEL_SERVICE_TIMEOUT = env.int("PARCEL_SERVICE_TIMEOUT", default=10)
+
 # Media / object storage
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -135,6 +163,12 @@ STORAGES = {
     ),
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
+
+# Largest file `DocumentService` accepts, in bytes. Default is 15 MB.
+DOCUMENT_MAX_UPLOAD_BYTES = env.int("DOCUMENT_MAX_UPLOAD_BYTES", default=15 * 1024 * 1024)
+# How many bytes from the start of an upload `DocumentService` reads to work out its
+# type. The default is what the `filetype` library recommends; rarely needs changing.
+DOCUMENT_HEADER_BYTES = env.int("DOCUMENT_HEADER_BYTES", default=8192)
 
 # Background tasks (django-tasks core API). django-tasks-db (the DatabaseBackend,
 # INSTALLED_APPS entry, migrations, and the `worker` service in docker-compose.yml

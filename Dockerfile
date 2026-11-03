@@ -24,6 +24,9 @@ COPY config/ ./config/
 COPY templates/ ./templates/
 COPY common/ ./common/
 COPY addresses/ ./addresses/
+COPY parcels/ ./parcels/
+COPY documents/ ./documents/
+COPY applications/ ./applications/
 
 # ruff/mypy write cache dirs under /app when run via `docker compose run`, so
 # it needs to be writable by the non-root user, not just root (the default

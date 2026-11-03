@@ -12,10 +12,24 @@ select = [
     "B",   # bugbear
     "SIM", # simplify
     "DJ",  # flake8-django
+    "PLR2004",  # magic values in comparisons: use a named constant or enum, e.g. HTTPStatus
+    "D101",  # public classes need a docstring (takes/returns style is not machine-checked)
+    "D102",  # public methods need a docstring
+    "D103",  # public functions need a docstring
 ]
 ignore = [
     "E501", # line length handled by the formatter
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests compare against literal expected values on purpose, and don't need docstrings.
+"config/test_settings.py" = ["PLR2004"]
+"**/tests/**" = ["PLR2004", "D101", "D102", "D103"]
+# Django's generated boilerplate doesn't need docstrings.
+"**/apps.py" = ["D101", "D102"]
+"manage.py" = ["D103"]
+# `addresses/` is being replaced by `parcels/`, so it is not worth documenting.
+"addresses/**" = ["D101", "D102", "D103"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["config"]
@@ -51,6 +65,11 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 # django_fsm_log ships no type stubs.
 module = "django_fsm_log.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# filetype ships no type stubs.
+module = "filetype.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

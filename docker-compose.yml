@@ -27,6 +27,8 @@ services:
       # into the image at build time), so without this a migration written
       # inside the container only exists in that container's throwaway layer.
       - ./addresses/migrations:/app/addresses/migrations
+      - ./documents/migrations:/app/documents/migrations
+      - ./applications/migrations:/app/applications/migrations
     env_file:
       - .env
     environment:
