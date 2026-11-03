@@ -13,6 +13,13 @@ def config_warnings() -> list[str]:
             "PARCEL_SERVICE_URL is not set, so parcel search and lookup will fail. "
             "Add it to .env (see .env.example)."
         )
+    elif not settings.PARCEL_SERVICE_URL.lower().startswith("https://"):
+        risk = (
+            "the access token would be sent unencrypted"
+            if settings.PARCEL_SERVICE_TOKEN
+            else "parcel data could be read or changed on its way here"
+        )
+        warnings.append(f"PARCEL_SERVICE_URL doesn't start with https://, so {risk}.")
     return warnings
 
 
