@@ -164,6 +164,12 @@ STORAGES = {
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 
+# Largest file `DocumentService` accepts, in bytes. Default is 15 MB.
+DOCUMENT_MAX_UPLOAD_BYTES = env.int("DOCUMENT_MAX_UPLOAD_BYTES", default=15 * 1024 * 1024)
+# How many bytes from the start of an upload `DocumentService` reads to work out its
+# type. The default is what the `filetype` library recommends; rarely needs changing.
+DOCUMENT_HEADER_BYTES = env.int("DOCUMENT_HEADER_BYTES", default=8192)
+
 # Background tasks (django-tasks core API). django-tasks-db (the DatabaseBackend,
 # INSTALLED_APPS entry, migrations, and the `worker` service in docker-compose.yml
 # running `manage.py db_worker`) is installed and ready, but not the default — tasks
