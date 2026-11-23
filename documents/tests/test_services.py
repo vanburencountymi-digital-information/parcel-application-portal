@@ -1,5 +1,4 @@
 import hashlib
-import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, create_autospec, patch
 
@@ -12,24 +11,24 @@ from documents.adapters import FileTypeAdapter
 from documents.exceptions import DocumentValidationError
 from documents.models import Document
 from documents.services import DocumentService
-from documents.tests.factories import JPEG_BYTES, PDF_BYTES, PNG_BYTES, make_upload
-
-_TEMP_MEDIA = tempfile.mkdtemp()
-
-
-@override_settings(
-    MEDIA_ROOT=_TEMP_MEDIA,
-    STORAGES={
-        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
-    },
+from documents.tests.helpers import (
+    JPEG_BYTES,
+    PDF_BYTES,
+    PNG_BYTES,
+    TEMP_MEDIA,
+    TEST_FOLDER,
+    make_upload,
+    use_temp_storage,
 )
+
+
+@use_temp_storage
 class DocumentServiceUploadTests(TestCase):
     user: User
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = User.objects.create_user("uploader", password="x")  # noqa: S106
+        cls.user = User.objects.create_user("uploader", password="x")
 
     def setUp(self) -> None:
         self.service = DocumentService()
@@ -59,18 +58,18 @@ class DocumentServiceUploadTests(TestCase):
     def test_type_comes_from_contents_not_name_or_claimed_type(self) -> None:
         upload = make_upload("scan.png", PDF_BYTES, content_type="image/png")
 
-        document = self.service.upload(upload, folder="applications/1")
+        document = self.service.upload(upload, folder=TEST_FOLDER)
 
         self.assertEqual(document.content_type, "application/pdf")
         self.assertTrue(str(document.file.name).endswith(".pdf"))
 
     def test_stored_name_ignores_the_uploaders_filename(self) -> None:
-        document = self.service.upload(make_upload("../../evil.pdf"), folder="applications/1")
+        document = self.service.upload(make_upload("../../evil.pdf"), folder=TEST_FOLDER)
 
-        self.assertEqual(document.file.name, f"applications/1/{document.id}.pdf")
+        self.assertEqual(document.file.name, f"{TEST_FOLDER}/{document.id}.pdf")
 
     def test_uploader_is_optional(self) -> None:
-        document = self.service.upload(make_upload(), folder="applications/1")
+        document = self.service.upload(make_upload(), folder=TEST_FOLDER)
 
         self.assertIsNone(document.uploader)
 
@@ -82,7 +81,7 @@ class DocumentServiceUploadTests(TestCase):
     )
     def test_refused_files_store_nothing(self, _name: str, content: bytes, message: str) -> None:
         with self.assertRaisesMessage(DocumentValidationError, message):
-            self.service.upload(make_upload("file.pdf", content), folder="applications/1")
+            self.service.upload(make_upload("file.pdf", content), folder=TEST_FOLDER)
 
         self.assertEqual(Document.objects.count(), 0)
 
@@ -93,7 +92,7 @@ class DocumentServiceUploadTests(TestCase):
         with self.assertRaisesMessage(
             DocumentValidationError, f"The limit is {filesizeformat(1024 * 1024)}"
         ):
-            self.service.upload(make_upload("big.pdf", too_big), folder="applications/1")
+            self.service.upload(make_upload("big.pdf", too_big), folder=TEST_FOLDER)
 
         self.assertEqual(Document.objects.count(), 0)
 
@@ -101,7 +100,7 @@ class DocumentServiceUploadTests(TestCase):
     def test_a_file_at_the_limit_is_accepted(self) -> None:
         at_limit = PDF_BYTES + b"0" * (1024 * 1024 - len(PDF_BYTES))
 
-        document = self.service.upload(make_upload("ok.pdf", at_limit), folder="applications/1")
+        document = self.service.upload(make_upload("ok.pdf", at_limit), folder=TEST_FOLDER)
 
         self.assertEqual(document.size, 1024 * 1024)
 
@@ -123,9 +122,9 @@ class DocumentServiceUploadTests(TestCase):
 
         if error:
             with self.assertRaisesMessage(DocumentValidationError, error):
-                service.upload(upload, folder="applications/1")
+                service.upload(upload, folder=TEST_FOLDER)
         else:
-            document = service.upload(upload, folder="applications/1")
+            document = service.upload(upload, folder=TEST_FOLDER)
             self.assertEqual(document.content_type, "application/pdf")
         adapter.detect.assert_called_once()
 
@@ -133,7 +132,7 @@ class DocumentServiceUploadTests(TestCase):
     def test_header_size_setting_limits_how_much_is_read_to_detect_the_type(self) -> None:
         # Two bytes is too little to recognize a PDF, so it is refused.
         with self.assertRaisesMessage(DocumentValidationError, "Only PDF"):
-            self.service.upload(make_upload(), folder="applications/1")
+            self.service.upload(make_upload(), folder=TEST_FOLDER)
 
     @parameterized.expand(
         [
@@ -153,9 +152,9 @@ class DocumentServiceUploadTests(TestCase):
 
     @patch.object(Document, "save", autospec=True, side_effect=RuntimeError("db down"))
     def test_file_is_removed_if_the_row_cannot_be_saved(self, _save: MagicMock) -> None:
-        stored_before = list(Path(_TEMP_MEDIA).rglob("*.pdf"))
+        stored_before = list(Path(TEMP_MEDIA).rglob("*.pdf"))
 
         with self.assertRaises(RuntimeError):
             self.service.upload(make_upload(), folder="applications/rollback")
 
-        self.assertEqual(list(Path(_TEMP_MEDIA).rglob("*.pdf")), stored_before)
+        self.assertEqual(list(Path(TEMP_MEDIA).rglob("*.pdf")), stored_before)
