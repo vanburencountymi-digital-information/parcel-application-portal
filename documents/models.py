@@ -33,4 +33,5 @@ class Document(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self) -> str:
+        """The uploader's original file name."""
         return self.original_name

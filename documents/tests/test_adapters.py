@@ -2,7 +2,7 @@ from django.test import SimpleTestCase
 from parameterized import parameterized
 
 from documents.adapters import FileTypeAdapter
-from documents.tests.factories import JPEG_BYTES, PDF_BYTES, PNG_BYTES
+from documents.tests.helpers import JPEG_BYTES, PDF_BYTES, PNG_BYTES
 
 
 class FileTypeAdapterTests(SimpleTestCase):

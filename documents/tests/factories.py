@@ -1,22 +1,34 @@
-from django.core.files.uploadedfile import SimpleUploadedFile
+from typing import Any
+
+from factory import LazyAttribute
+from factory.django import DjangoModelFactory
 
 from documents.models import Document
 from documents.services import DocumentService
-
-PDF_BYTES = b"%PDF-1.7\n%test file\n"
-JPEG_BYTES = b"\xff\xd8\xff\xe0" + b"\x00" * 16
-PNG_BYTES = b"\x89PNG\r\n\x1a\n" + b"\x00" * 16
+from documents.tests.helpers import TEST_FOLDER, make_upload
 
 
-def make_upload(
-    name: str = "deed.pdf",
-    content: bytes = PDF_BYTES,
-    content_type: str = "application/pdf",
-) -> SimpleUploadedFile:
-    """An in-memory upload. Defaults to a tiny valid PDF."""
-    return SimpleUploadedFile(name, content, content_type=content_type)
+class DocumentFactory(DjangoModelFactory[Document]):
+    """A saved `Document`, created through `DocumentService` the same way real uploads are.
 
+    Takes: `original_name` (the upload's file name), `file` (the upload itself, a valid PDF
+    by default), `uploader`, and `folder` (where it is stored).
+    Returns: the saved `Document`. Its stored name and type come from the service, which
+    reads them from `file`, so pass `file` to change them.
+    To test other file types, call `DocumentService.upload` directly with `make_upload`.
+    """
 
-def make_document(folder: str = "applications/test", **upload_kwargs: str | bytes) -> Document:
-    """A saved `Document`, created the same way real uploads are."""
-    return DocumentService().upload(make_upload(**upload_kwargs), folder=folder)  # type: ignore[arg-type]
+    class Meta:
+        model = Document
+
+    original_name = "deed.pdf"
+    uploader = None
+    folder = TEST_FOLDER
+    file = LazyAttribute(lambda o: make_upload(o.original_name))
+
+    @classmethod
+    def _create(cls, model_class: type[Document], *args: Any, **kwargs: Any) -> Document:
+        # Goes through the service, not Document.objects.create, so the checks and storage match real uploads.
+        return DocumentService().upload(
+            kwargs.pop("file"), folder=kwargs.pop("folder"), uploader=kwargs.pop("uploader")
+        )
