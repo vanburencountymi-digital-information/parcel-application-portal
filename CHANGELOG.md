@@ -2,6 +2,27 @@
 
 <!-- version list -->
 
+## v1.3.0 (2026-11-23)
+
+### Chores
+
+- Add factory_boy for test factories
+  ([`d5c711f`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/d5c711ff73262557666b256b7185048d424d9a1b))
+
+- Enable ruff D105 and S rules
+  ([`fbf1c09`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/fbf1c099dc528015c9efa802a77e377cdcc0c0ca))
+
+### Features
+
+- Add AssessingUnit model
+  ([`dd30e58`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/dd30e58d60500277843ed90aa9887c5e09b110e6))
+
+### Testing
+
+- Use factory_boy for documents tests
+  ([`2f48731`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/2f48731bd71930d0272545e041005f65c490b028))
+
+
 ## v1.2.0 (2026-11-03)
 
 ### Bug Fixes
