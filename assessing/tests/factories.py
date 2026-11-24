@@ -4,7 +4,7 @@ from typing import Any
 from factory import Sequence, SubFactory, Trait, post_generation
 from factory.django import DjangoModelFactory
 
-from applications.models import AssessingUnit, Assessor
+from assessing.models import AssessingUnit, Assessor
 from common.tests.factories import UserFactory
 
 

@@ -28,6 +28,7 @@ services:
       # inside the container only exists in that container's throwaway layer.
       - ./addresses/migrations:/app/addresses/migrations
       - ./documents/migrations:/app/documents/migrations
+      - ./assessing/migrations:/app/assessing/migrations
       - ./applications/migrations:/app/applications/migrations
     env_file:
       - .env

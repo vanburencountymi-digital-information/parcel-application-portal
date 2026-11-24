@@ -3,8 +3,8 @@ from django.db.models import ProtectedError
 from django.test import SimpleTestCase, TestCase
 from parameterized import parameterized
 
-from applications.models import AssessingUnit, Assessor
-from applications.tests.factories import AssessingUnitFactory, AssessorFactory
+from assessing.models import AssessingUnit, Assessor
+from assessing.tests.factories import AssessingUnitFactory, AssessorFactory
 
 
 class AssessingUnitStrTests(SimpleTestCase):

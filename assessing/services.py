@@ -3,8 +3,8 @@ from collections.abc import Iterable
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.db import IntegrityError, transaction
 
-from applications.exceptions import AssessorValidationError
-from applications.models import AssessingUnit, Assessor
+from assessing.exceptions import AssessorValidationError
+from assessing.models import AssessingUnit, Assessor
 from authentication.models import User
 
 

@@ -4,9 +4,9 @@ from django import forms
 from django.contrib import admin
 from django.http import HttpRequest
 
-from applications.exceptions import AssessorValidationError
-from applications.models import AssessingUnit, Assessor
-from applications.services import AssessorService
+from assessing.exceptions import AssessorValidationError
+from assessing.models import AssessingUnit, Assessor
+from assessing.services import AssessorService
 
 
 @admin.register(AssessingUnit)

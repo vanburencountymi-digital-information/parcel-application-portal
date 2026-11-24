@@ -11,7 +11,7 @@ class User(AbstractUser):
     """A person who can sign in. Identified by email; there is no username.
 
     Email is unique ignoring case, enforced by the database. Assessors and staff are
-    both users; an assessor is a user with a linked `applications.Assessor`.
+    both users; an assessor is a user with a linked `assessing.Assessor`.
     """
 
     username = None  # type: ignore[assignment]  # removed: email is the identifier
