@@ -65,6 +65,11 @@ module = "crispy_forms.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
+# phonenumber_field ships no type stubs.
+module = "phonenumber_field.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
 # django_fsm_log ships no type stubs.
 module = "django_fsm_log.*"
 ignore_missing_imports = true
