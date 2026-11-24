@@ -2,6 +2,33 @@
 
 <!-- version list -->
 
+## v1.5.0 (2026-11-24)
+
+### Chores
+
+- Bump django-fsm-2 to 4.3.0 and django-fsm-log to 6.0.0
+  ([`08eb6ae`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/08eb6aee4265abe41a3d08bc97b92fbf93ddce3d))
+
+- Bump patch-level dependencies
+  ([`2f2edd7`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/2f2edd7b247c003517efa324dbbf0e8a4c86b5b5))
+
+- Bump ruff to 0.17.6 and mypy to 2.4.1
+  ([`f8172ea`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/f8172eaf47803db25edd035db34ba3c6d3aa4b8b))
+
+- Regenerate migrations for the assessing app
+  ([`1eb2897`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/1eb28971b8940a97cd9605dd7c5f0f6b8d3e97e4))
+
+### Features
+
+- Add Application model with FSM status
+  ([`6477cdd`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/6477cdd70833cb6d339e941fcdc421682c3682fd))
+
+### Refactoring
+
+- Move AssessingUnit and Assessor into a new assessing app
+  ([`b8c27c7`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/b8c27c7901a1de2b71b50fc014bfc359269facdf))
+
+
 ## v1.4.0 (2026-11-24)
 
 ### Features
