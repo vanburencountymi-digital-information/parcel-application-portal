@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
 from applications.models import AssessingUnit
+from authentication.models import User
 
 
 class AssessingUnitAdminTests(TestCase):
@@ -10,7 +10,7 @@ class AssessingUnitAdminTests(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.admin_user = User.objects.create_superuser("admin", password="x")
+        cls.admin_user = User.objects.create_superuser("admin@example.com", password="x")
 
     def setUp(self) -> None:
         self.client.force_login(self.admin_user)

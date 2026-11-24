@@ -22,6 +22,7 @@ COPY manage.py .
 COPY pyproject.toml .
 COPY config/ ./config/
 COPY templates/ ./templates/
+COPY authentication/ ./authentication/
 COPY common/ ./common/
 COPY addresses/ ./addresses/
 COPY parcels/ ./parcels/
