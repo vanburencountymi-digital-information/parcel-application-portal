@@ -1,6 +1,8 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
+from django.conf import settings
 from django.db import models
+from django.utils import timezone
 from django_fsm import FSMField, FSMModelMixin, transition
 from django_fsm_log.decorators import fsm_log_by, fsm_log_description
 
@@ -129,3 +131,70 @@ class Application(FSMModelMixin, models.Model):
         Takes: by (User | None): who made the move, for the status log.
         Returns: None.
         """
+
+
+class ApplicationHoldQuerySet(models.QuerySet["ApplicationHold"]):
+    """Shared filters for holds, so "open" is defined in one place."""
+
+    def open(self) -> Self:
+        """Holds that have not been released yet.
+
+        Returns: ApplicationHoldQuerySet.
+        """
+        return self.filter(released_at__isnull=True)
+
+
+class ApplicationHold(models.Model):
+    """One pause on an application while something outside the portal is sorted out.
+
+    A row is kept for every hold, so the history and how long each one lasted are not lost.
+    A hold is open until `released_at` is set. An application can have only one open hold of each kind, but several kinds at once. This model only stores the data. Opening and
+    closing holds (and the notes that go with them) belongs in `ApplicationService`.
+    """
+
+    class Kind(models.TextChoices):
+        DELINQUENT_TAXES = "delinquent_taxes", "Delinquent taxes"
+        DEED_NOT_RECORDED = "deed_not_recorded", "Deed not recorded"
+        OTHER = "other", "Other"
+
+    application = models.ForeignKey(Application, on_delete=models.PROTECT, related_name="holds")
+    kind = models.CharField(max_length=30, choices=Kind.choices)
+    placed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="holds_placed"
+    )
+    placed_at = models.DateTimeField(default=timezone.now)
+    released_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="holds_released",
+        null=True,
+        blank=True,
+    )
+    released_at = models.DateTimeField(null=True, blank=True)
+
+    objects = ApplicationHoldQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["-placed_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["application", "kind"],
+                condition=models.Q(released_at__isnull=True),
+                name="applicationhold_one_open_per_kind",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        """The kind and the application, like "Delinquent taxes hold on LD-2026-00042".
+
+        Returns: str.
+        """
+        return f"{self.get_kind_display()} hold on {self.application}"
+
+    @property
+    def is_open(self) -> bool:
+        """True while the hold has not been released.
+
+        Returns: bool.
+        """
+        return self.released_at is None
