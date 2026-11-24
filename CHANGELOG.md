@@ -2,6 +2,29 @@
 
 <!-- version list -->
 
+## v1.4.0 (2026-11-24)
+
+### Features
+
+- Add Assessor admin
+  ([`2d3fc94`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/2d3fc94933619ee132a8cbacda601b94543f6c50))
+
+- Add Assessor model with factory and tests
+  ([`590cf71`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/590cf7192f69b0f7e1811a9e20a36cf3d48d9791))
+
+- Add Assessor name and email properties
+  ([`38d6df0`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/38d6df077dd710c1d261deb49467ca7036e90ee4))
+
+- Add AssessorService
+  ([`13a90cf`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/13a90cf7e8f9befef7a80663d04914b13284ff00))
+
+- Add authentication app with custom User model
+  ([`f209746`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/f209746b11efca1a62e79118d9d8bb63f33e273e))
+
+- Add django-phonenumber-field with US default region
+  ([`9630154`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/963015451bdf837421f94918d2c9762c965811d2))
+
+
 ## v1.3.0 (2026-11-23)
 
 ### Chores
