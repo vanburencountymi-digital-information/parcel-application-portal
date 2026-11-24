@@ -18,7 +18,7 @@ repos:
 
   # Keep rev in step with ruff's version in requirements.txt.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.8
+    rev: v0.17.6
     hooks:
       - id: ruff
         args: [--fix]
