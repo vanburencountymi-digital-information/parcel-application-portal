@@ -2,11 +2,11 @@ import hashlib
 from pathlib import Path
 from unittest.mock import MagicMock, create_autospec, patch
 
-from django.contrib.auth.models import User
 from django.template.defaultfilters import filesizeformat
 from django.test import TestCase, override_settings
 from parameterized import parameterized
 
+from authentication.models import User
 from documents.adapters import FileTypeAdapter
 from documents.exceptions import DocumentValidationError
 from documents.models import Document
@@ -28,7 +28,7 @@ class DocumentServiceUploadTests(TestCase):
 
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = User.objects.create_user("uploader", password="x")
+        cls.user = User.objects.create_user("uploader@example.com", password="x")
 
     def setUp(self) -> None:
         self.service = DocumentService()

@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "guardian",
+    "phonenumber_field",
     "django_fsm_log",
+    "authentication",
     "common",
     "templates",
     "addresses",
@@ -97,6 +99,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# Must be set before the first migration: Django cannot swap the user model afterwards.
+# Ours signs in by email (no username) and lives in the `authentication` app.
+AUTH_USER_MODEL = "authentication.User"
+
+# django-guardian keeps one placeholder "anonymous" user and finds it by our login field
+# (email). It must already be lowercase, because `User.save` lowercases emails and guardian
+# looks the row up by exact match.
+ANONYMOUS_USER_NAME = "anonymous@guardian.invalid"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
@@ -183,6 +194,9 @@ TASKS = {
         ),
     },
 }
+
+# django-phonenumber-field
+PHONENUMBER_DEFAULT_REGION = "US"
 
 # crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap5"

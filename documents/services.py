@@ -1,7 +1,7 @@
 import hashlib
+from typing import TYPE_CHECKING
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.files.uploadedfile import UploadedFile
 from django.template.defaultfilters import filesizeformat
 from django.utils.text import get_text_list
@@ -10,6 +10,9 @@ from documents.adapters import FileTypeAdapter
 from documents.exceptions import DocumentValidationError
 from documents.models import Document
 from documents.types import DocumentType
+
+if TYPE_CHECKING:
+    from authentication.models import User
 
 
 class DocumentService:
