@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "addresses",
     "parcels",
     "documents",
+    "assessing",
     "applications",
 ]
 

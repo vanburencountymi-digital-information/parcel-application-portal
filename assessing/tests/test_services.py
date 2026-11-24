@@ -5,10 +5,10 @@ from django.db import IntegrityError
 from django.test import TestCase
 from parameterized import parameterized
 
-from applications.exceptions import AssessorValidationError
-from applications.models import AssessingUnit, Assessor
-from applications.services import AssessorService
-from applications.tests.factories import AssessingUnitFactory, AssessorFactory
+from assessing.exceptions import AssessorValidationError
+from assessing.models import AssessingUnit, Assessor
+from assessing.services import AssessorService
+from assessing.tests.factories import AssessingUnitFactory, AssessorFactory
 from authentication.models import User
 from common.tests.factories import UserFactory
 
@@ -86,7 +86,7 @@ class AssessorServiceCreateTests(TestCase):
         with self.assertRaisesMessage(AssessorValidationError, "already exists"):
             AssessorService().create("walter@example.com", self.units)
 
-    @patch("applications.services.Assessor.save", autospec=True, side_effect=RuntimeError("boom"))
+    @patch("assessing.services.Assessor.save", autospec=True, side_effect=RuntimeError("boom"))
     def test_failure_after_the_user_is_saved_saves_nothing(self, _save: MagicMock) -> None:
         with self.assertRaises(RuntimeError):
             AssessorService().create("ada@example.com", self.units)
@@ -94,7 +94,7 @@ class AssessorServiceCreateTests(TestCase):
         self.assertFalse(User.objects.filter(email="ada@example.com").exists())
         self.assertEqual(Assessor.objects.count(), 0)
 
-    @patch("applications.services.User.full_clean", autospec=True)
+    @patch("assessing.services.User.full_clean", autospec=True)
     def test_database_email_clash_is_reported_as_a_duplicate(self, _full_clean: MagicMock) -> None:
         # Skipping full_clean stands in for losing a race: the database is what refuses.
         UserFactory.create(email="ada@example.com")
@@ -105,14 +105,14 @@ class AssessorServiceCreateTests(TestCase):
         self.assertEqual(Assessor.objects.count(), 0)
 
     @patch(
-        "applications.services.User.save",
+        "assessing.services.User.save",
         side_effect=IntegrityError("some other constraint"),
     )
     def test_other_database_errors_are_not_hidden(self, _create: MagicMock) -> None:
         with self.assertRaisesMessage(IntegrityError, "some other constraint"):
             AssessorService().create("ada@example.com", self.units)
 
-    @patch("applications.services.User.clean", side_effect=ValidationError("No can do."))
+    @patch("assessing.services.User.clean", side_effect=ValidationError("No can do."))
     def test_errors_with_no_field_are_shown_without_a_prefix(self, _clean: MagicMock) -> None:
         with self.assertRaises(AssessorValidationError) as raised:
             AssessorService().create("ada@example.com", self.units)

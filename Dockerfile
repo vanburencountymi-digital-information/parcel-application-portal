@@ -27,6 +27,7 @@ COPY common/ ./common/
 COPY addresses/ ./addresses/
 COPY parcels/ ./parcels/
 COPY documents/ ./documents/
+COPY assessing/ ./assessing/
 COPY applications/ ./applications/
 
 # ruff/mypy write cache dirs under /app when run via `docker compose run`, so

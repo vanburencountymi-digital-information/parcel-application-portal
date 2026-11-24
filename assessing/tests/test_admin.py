@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from applications.models import AssessingUnit, Assessor
-from applications.tests.factories import AssessingUnitFactory, AssessorFactory
+from assessing.models import AssessingUnit, Assessor
+from assessing.tests.factories import AssessingUnitFactory, AssessorFactory
 from authentication.models import User
 
 
@@ -20,7 +20,7 @@ class AdminTestCase(TestCase):
 class AssessingUnitAdminTests(AdminTestCase):
     def add_unit(self, name: str) -> None:
         response = self.client.post(
-            reverse("admin:applications_assessingunit_add"),
+            reverse("admin:assessing_assessingunit_add"),
             {"name": name, "kind": AssessingUnit.Kind.TOWNSHIP, "parcel_unit_code": ""},
         )
         self.assertEqual(response.status_code, 302)
@@ -57,7 +57,7 @@ class AssessorAdminTests(AdminTestCase):
 
     def test_add_form_creates_user_and_assessor(self) -> None:
         response = self.client.post(
-            reverse("admin:applications_assessor_add"), self.add_data("Ada@Example.com")
+            reverse("admin:assessing_assessor_add"), self.add_data("Ada@Example.com")
         )
 
         self.assertEqual(response.status_code, 302)
@@ -71,7 +71,7 @@ class AssessorAdminTests(AdminTestCase):
         AssessorFactory.create(user__email="ada@example.com")
 
         response = self.client.post(
-            reverse("admin:applications_assessor_add"), self.add_data("ADA@example.com")
+            reverse("admin:assessing_assessor_add"), self.add_data("ADA@example.com")
         )
 
         self.assertContains(response, "email: User with this Email address already exists.")
@@ -81,7 +81,7 @@ class AssessorAdminTests(AdminTestCase):
         assessor = AssessorFactory.create(assessing_units=[self.unit])
 
         response = self.client.post(
-            reverse("admin:applications_assessor_change", args=[assessor.pk]),
+            reverse("admin:assessing_assessor_change", args=[assessor.pk]),
             {"phone_number": "", "assessing_units": [self.unit.pk]},
         )
 
