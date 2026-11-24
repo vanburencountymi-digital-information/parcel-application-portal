@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "guardian",
+    "phonenumber_field",
     "django_fsm_log",
     "authentication",
     "common",
@@ -193,6 +194,9 @@ TASKS = {
         ),
     },
 }
+
+# django-phonenumber-field
+PHONENUMBER_DEFAULT_REGION = "US"
 
 # crispy-forms
 CRISPY_TEMPLATE_PACK = "bootstrap5"
