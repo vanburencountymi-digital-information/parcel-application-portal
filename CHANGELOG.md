@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.6.0 (2026-11-24)
+
+### Features
+
+- Add ApplicationHold model
+  ([`2fc43fa`](https://github.com/vanburencountymi-digital-information/parcel-application-portal/commit/2fc43fa29e2ab79c61bc3cc11bbf05fdf8377e12))
+
+
 ## v1.5.0 (2026-11-24)
 
 ### Chores
