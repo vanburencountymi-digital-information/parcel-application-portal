@@ -60,6 +60,22 @@ class AssessorTests(TestCase):
         with self.assertRaises(ProtectedError):
             self.active.user.delete()
 
+    def test_name_and_email_come_from_the_user(self) -> None:
+        user = self.active.user
+        self.assertEqual(
+            (self.active.email, self.active.first_name, self.active.last_name),
+            (user.email, user.first_name, user.last_name),
+        )
+        self.assertEqual(self.active.full_name, user.get_full_name())
+
+    def test_assessors_are_ordered_by_email(self) -> None:
+        AssessorFactory.create(user__email="zed@example.com")
+        AssessorFactory.create(user__email="amy@example.com")
+
+        emails = [assessor.email for assessor in Assessor.objects.all()]
+
+        self.assertEqual(emails, sorted(emails))
+
     def test_with_unit_creates_a_unit(self) -> None:
         assessor = AssessorFactory.create(with_unit=True)
         self.assertEqual(assessor.assessing_units.count(), 1)

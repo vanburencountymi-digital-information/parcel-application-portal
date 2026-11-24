@@ -48,4 +48,24 @@ class Assessor(models.Model):
 
     def __str__(self) -> str:
         """Full name, or the email if no name is set."""
-        return self.user.get_full_name() or self.user.email
+        return self.full_name or self.email
+
+    @property
+    def email(self) -> str:
+        """The linked user's email. Read-only: change it on the user."""
+        return self.user.email
+
+    @property
+    def first_name(self) -> str:
+        """The linked user's first name."""
+        return self.user.first_name
+
+    @property
+    def last_name(self) -> str:
+        """The linked user's last name."""
+        return self.user.last_name
+
+    @property
+    def full_name(self) -> str:
+        """The linked user's first and last name, or "" if neither is set."""
+        return self.user.get_full_name()
